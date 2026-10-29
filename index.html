@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FÍSICA - Biofísica Médica y Movimiento Armónico Simple (Facultad de Cs. Médicas - UCCuyo)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- KaTeX para renderizado matemático de alta precisión -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathWhenReady()"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f7f9f6;
+      color: #1e293b;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Paleta Institucional UCCuyo (Verde Oliva y Contrastes Biofísicos) */
+    .text-accent { color: #436600; }
+    .bg-accent { background-color: #436600; }
+    .bg-accent-hover:hover { background-color: #324d00; }
+    .bg-accent-light { background-color: #f1f6eb; }
+    .border-accent { border-color: #436600; }
+
+    .text-primary { color: #436600; }
+    .bg-primary { background-color: #436600; }
+    .bg-primary-dark { background-color: #324d00; }
+    .border-primary { border-color: #436600; }
+    
+    .focus-accent:focus {
+      border-color: #436600;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 102, 0, 0.2);
+    }
+    
+    input[type=range] {
+      accent-color: #436600;
+    }
+    .grid-bg {
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .badge-katex .katex {
+      font-size: 1.05em;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between selection:bg-accent/20 text-gray-800">
+
+  <!-- Cabecera Institucional UCCuyo -->
+  <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 no-math">
+    <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-white font-bold text-xl shadow-md">
+          FIS
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-gray-800 tracking-wide uppercase">FÍSICA MÉDICA Y BIOFÍSICA</h1>
+          <p class="text-xs text-gray-500 font-semibold">Curso de Ingreso a Medicina (Facultad de Cs. Médicas - UCCuyo)</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <!-- Botón Vademécum Teórico -->
+        <button onclick="openFormulasModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-200 transition">
+          <i class="fa-solid fa-book-bookmark text-accent"></i>
+          <span class="hidden sm:inline">Vademécum</span>
+        </button>
+        <!-- Botón Guía de Uso -->
+        <button onclick="openTutorial()" class="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-white text-xs font-semibold rounded-lg shadow-sm hover:opacity-90 transition">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Guía de Uso</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido Principal con Barra Lateral -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-6">
+    
+    <!-- Menú de Navegación Lateral -->
+    <nav class="w-full lg:w-64 shrink-0 lg:shrink-0 flex flex-row lg:flex-col gap-2 bg-white p-3 rounded-2xl shadow-sm border border-gray-200 overflow-x-auto lg:overflow-x-visible whitespace-nowrap lg:whitespace-normal sticky top-20 h-fit" id="navTabs">
+      <button onclick="switchTab('lab')" id="tab-btn-lab" data-tab="lab" class="nav-btn bg-accent text-white flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm flex items-center gap-2">
+        <i class="fa-solid fa-flask-vial"></i> <span>1. Simulador Dinámico</span>
+      </button>
+      <button onclick="switchTab('mod1')" id="tab-btn-mod1" data-tab="mod1" class="nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2">
+        <i class="fa-solid fa-wave-square"></i> <span>2. Cinemática del MAS</span>
+      </button>
+      <button onclick="switchTab('mod2')" id="tab-btn-mod2" data-tab="mod2" class="nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2">
+        <i class="fa-solid fa-arrows-left-right-to-line"></i> <span>3. Hooke & Dinámica</span>
+      </button>
+      <button onclick="switchTab('mod3')" id="tab-btn-mod3" data-tab="mod3" class="nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2">
+        <i class="fa-solid fa-chart-line"></i> <span>4. Conservación de Energía</span>
+      </button>
+      <button onclick="switchTab('mod4')" id="tab-btn-mod4" data-tab="mod4" data-last="true" class="nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 border-t lg:border-t border-gray-100">
+        <i class="fa-solid fa-heart-pulse text-accent"></i> <span>5. Casos Clínicos & Biofísica</span>
+      </button>
+    </nav>
+
+    <!-- Área de Contenido Dinámico -->
+    <div class="flex-1 space-y-6 min-w-0">
+
+    <!-- SECCIÓN 1: LABORATORIO Y SIMULADOR PRINCIPAL -->
+    <div id="view-lab" class="space-y-6">
+
+      <!-- Panel de Controles Superiores & Presets Clínicos -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">Presets Clínicos:</span>
+          <button onclick="applyPreset('ideal')" class="preset-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-700 transition">
+            🔬 Oscilador Mecánico Estándar
+          </button>
+          <button onclick="applyPreset('ecg')" class="preset-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-700 transition">
+            ❤️ Ciclo Cardíaco (75 lpm)
+          </button>
+          <button onclick="applyPreset('ultrasound')" class="preset-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition">
+            🔊 Onda Acústica / Fonación
+          </button>
+          <button onclick="applyPreset('tendon')" class="preset-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-amber-50 hover:text-amber-700 text-slate-700 transition">
+            🦵 Tendón de Aquiles (Viscoelástico)
+          </button>
+        </div>
+
+        <!-- Botones de Control de Simulación -->
+        <div class="flex items-center gap-2">
+          <button id="btn-play" onclick="togglePlay()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs flex items-center gap-2 shadow-sm transition">
+            <svg id="icon-play" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+            <span id="label-play">Pausar</span>
+          </button>
+          <button onclick="stepSimulation()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1 transition" title="Avanzar un fotograma">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+            Paso
+          </button>
+          <button onclick="resetSimulation()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1 transition" title="Reiniciar a t=0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Reiniciar
+          </button>
+          <!-- Bioacústica interactiva (Audio) -->
+          <button id="btn-sound" onclick="toggleAudio()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-800 font-semibold text-xs flex items-center gap-1.5 transition">
+            <svg id="icon-sound" class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            <span id="label-sound">Bioacústica: OFF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Layout Central: Visualizador Físico y Datos Numéricos -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Columna Izquierda: Escena de Animación y Parámetros en Tiempo Real (8 cols) -->
+        <div class="lg:col-span-8 space-y-4">
+
+          <!-- Canvas del Oscilador Masa-Resorte -->
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm flex flex-col">
+            <div class="px-4 py-2.5 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Modelo Físico: Oscilador Armónico Ideal & Vectores</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs text-slate-500 font-medium">
+                <span class="flex items-center gap-1"><span class="w-3 h-1 bg-sky-500 rounded"></span> Velocidad $\vec{v}$</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-1 bg-rose-500 rounded"></span> Aceleración $\vec{a}$</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-1 bg-amber-500 rounded"></span> Fuerza $\vec{F}$</span>
+              </div>
+            </div>
+
+            <!-- Canvas Reactivo -->
+            <div class="relative w-full h-64 sm:h-72 bg-gradient-to-b from-slate-100 to-slate-50 grid-bg overflow-hidden cursor-ew-resize" id="canvas-container" title="Arrastra el bloque con el mouse o dedo para cambiar la elongación inicial x">
+              <canvas id="springCanvas" class="w-full h-full block"></canvas>
+              <!-- Indicador de interacción -->
+              <div class="absolute bottom-2 right-3 pointer-events-none bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-slate-200 text-[10px] text-slate-500 shadow-sm">
+                💡 Haz clic y arrastra el bloque para ajustar la amplitud inicial
+              </div>
+            </div>
+
+            <!-- Fila de Estado Cinemático y Dinámico Instantáneo -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-slate-200 border-t border-slate-200 bg-white text-center">
+              <div class="p-3">
+                <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Elongación ($x$)</p>
+                <p id="val-x" class="text-lg font-bold text-slate-800 font-mono mt-0.5">+0.00 m</p>
+                <span id="badge-x-state" class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">En equilibrio</span>
+              </div>
+              <div class="p-3">
+                <p class="text-[11px] font-semibold text-sky-500 uppercase tracking-wider">Velocidad ($v_x$)</p>
+                <p id="val-v" class="text-lg font-bold text-sky-600 font-mono mt-0.5">+0.00 m/s</p>
+                <span id="badge-v-state" class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 font-medium">Máxima</span>
+              </div>
+              <div class="p-3">
+                <p class="text-[11px] font-semibold text-rose-500 uppercase tracking-wider">Aceleración ($a_x$)</p>
+                <p id="val-a" class="text-lg font-bold text-rose-600 font-mono mt-0.5">0.00 m/s²</p>
+                <span id="badge-a-state" class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-medium">Nula</span>
+              </div>
+              <div class="p-3">
+                <p class="text-[11px] font-semibold text-amber-600 uppercase tracking-wider">Fuerza Hooke ($F_x$)</p>
+                <p id="val-f" class="text-lg font-bold text-amber-600 font-mono mt-0.5">0.00 N</p>
+                <span id="badge-f-state" class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-medium">$F_x = 0$</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Osciloscopio Multicanal Continuo -->
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">Osciloscopio Fisiológico: Curvas Temporales $x(t), v(t), a(t)$</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <label class="flex items-center gap-1 text-slate-700 cursor-pointer">
+                  <input type="checkbox" id="chk-trace-x" checked class="rounded text-sky-600 focus:ring-0">
+                  <span class="font-medium">$x(t)$ [m]</span>
+                </label>
+                <label class="flex items-center gap-1 text-sky-600 cursor-pointer">
+                  <input type="checkbox" id="chk-trace-v" checked class="rounded text-sky-600 focus:ring-0">
+                  <span class="font-medium">$v(t)$ [m/s]</span>
+                </label>
+                <label class="flex items-center gap-1 text-rose-600 cursor-pointer">
+                  <input type="checkbox" id="chk-trace-a" checked class="rounded text-rose-600 focus:ring-0">
+                  <span class="font-medium">$a(t)$ [m/s²]</span>
+                </label>
+              </div>
+            </div>
+            <div class="h-44 sm:h-52 bg-slate-900 relative">
+              <canvas id="oscilloCanvas" class="w-full h-full block"></canvas>
+              <!-- Leyenda temporal flotante -->
+              <div class="absolute bottom-1 right-2 text-[10px] text-slate-400 font-mono">
+                Ventana: 8.0 s | Paso de muestreo: continuo
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Columna Derecha: Controles de Parámetros y Gráficas de Energía (4 cols) -->
+        <div class="lg:col-span-4 space-y-4">
+
+          <!-- Controles de Parámetros Físicos -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3.5">
+            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+              <span>Parámetros del Sistema</span>
+              <span class="text-[10px] text-sky-600 font-mono">Variables Independientes</span>
+            </h2>
+
+            <!-- Slider Masa -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-600 font-medium">Masa oscilante ($m$):</span>
+                <span id="label-m" class="font-mono font-bold text-slate-800">1.00 kg</span>
+              </div>
+              <input type="range" id="slider-m" min="0.2" max="5.0" step="0.1" value="1.0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>0.2 kg (Tejido liviano)</span>
+                <span>5.0 kg (Carga pesada)</span>
+              </div>
+            </div>
+
+            <!-- Slider Constante Elástica k -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-600 font-medium">Constante elástica ($k$):</span>
+                <span id="label-k" class="font-mono font-bold text-slate-800">20.0 N/m</span>
+              </div>
+              <input type="range" id="slider-k" min="2.0" max="100.0" step="1.0" value="20.0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>2 N/m (Complaciente)</span>
+                <span>100 N/m (Rígido)</span>
+              </div>
+            </div>
+
+            <!-- Slider Amplitud A -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-600 font-medium">Amplitud máxima ($A$):</span>
+                <span id="label-A" class="font-mono font-bold text-slate-800">0.80 m</span>
+              </div>
+              <input type="range" id="slider-A" min="0.1" max="1.5" step="0.05" value="0.8" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>0.10 m (Microoscilación)</span>
+                <span>1.50 m (Alta amplitud)</span>
+              </div>
+            </div>
+
+            <!-- Amortiguamiento Tisular / Biomecánico -->
+            <div class="pt-2 border-t border-slate-100">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-600 font-medium flex items-center gap-1">
+                  Amortiguamiento ($\gamma$ / viscosidad):
+                </span>
+                <span id="label-damping" class="font-mono font-bold text-slate-800">0.00 s⁻¹</span>
+              </div>
+              <input type="range" id="slider-damping" min="0" max="1.0" step="0.05" value="0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>0 (MAS Conservativo)</span>
+                <span>1.0 (Amortiguado tisular)</span>
+              </div>
+            </div>
+
+            <!-- Indicadores Derivados de la Frecuencia y Período -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 grid grid-cols-3 text-center text-xs gap-1">
+              <div>
+                <p class="text-[10px] text-slate-500 font-medium">Período ($T$)</p>
+                <p id="calc-T" class="font-bold text-slate-800 font-mono mt-0.5">1.40 s</p>
+              </div>
+              <div>
+                <p class="text-[10px] text-slate-500 font-medium">Frecuencia ($f$)</p>
+                <p id="calc-f" class="font-bold text-slate-800 font-mono mt-0.5">0.71 Hz</p>
+              </div>
+              <div>
+                <p class="text-[10px] text-slate-500 font-medium">Freq. Angular ($\omega$)</p>
+                <p id="calc-w" class="font-bold text-slate-800 font-mono mt-0.5">4.47 rad/s</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfica Parabólica de Conservación de Energía -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                Parábolas de Energía $E(x)$
+              </h2>
+              <span class="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full" id="calc-E-total">
+                $E = 6.40\text{ J}$
+              </span>
+            </div>
+
+            <!-- Canvas Parabólico -->
+            <div class="h-44 bg-slate-50 border border-slate-100 rounded-xl relative overflow-hidden">
+              <canvas id="energyCurveCanvas" class="w-full h-full block"></canvas>
+            </div>
+
+            <!-- Barras de Energía Cinética y Potencial Dinámicas -->
+            <div class="space-y-2 pt-1 text-xs">
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sky-700 font-semibold flex items-center gap-1">
+                    <span class="w-2.5 h-2.5 rounded bg-sky-500 inline-block"></span>
+                    Cinética $K = \frac{1}{2}mv^2$:
+                  </span>
+                  <span id="text-bar-K" class="font-mono font-bold text-sky-800">0.00 J (0%)</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div id="bar-K" class="h-full bg-sky-500 rounded-full transition-all duration-75" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-amber-700 font-semibold flex items-center gap-1">
+                    <span class="w-2.5 h-2.5 rounded bg-amber-500 inline-block"></span>
+                    Potencial Elástica $U = \frac{1}{2}kx^2$:
+                  </span>
+                  <span id="text-bar-U" class="font-mono font-bold text-amber-800">6.40 J (100%)</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div id="bar-U" class="h-full bg-amber-500 rounded-full transition-all duration-75" style="width: 100%"></div>
+                </div>
+              </div>
+
+              <!-- Comprobación Teorema Conservación -->
+              <div class="bg-amber-50/70 p-2 rounded-lg border border-amber-200/60 text-[11px] text-amber-900 flex items-center justify-between">
+                <span>Conservación: $K + U = E_{\text{total}}$</span>
+                <span class="font-bold font-mono">100.0% Invariante</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfica de Fuerza Restauradora Fx vs x -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Ley de Hooke: $F_x(x)$</h2>
+              <span class="text-[10px] text-slate-500 font-mono">Pendiente $= -k$</span>
+            </div>
+            <div class="h-32 bg-slate-50 border border-slate-100 rounded-xl relative overflow-hidden">
+              <canvas id="hookeCurveCanvas" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SECCIÓN 2: MÓDULO 1 - CINEMÁTICA Y PARÁMETROS -->
+    <div id="view-mod1" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="max-w-3xl">
+          <span class="text-xs font-bold text-sky-600 uppercase tracking-wider">Unidad Didáctica 1</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Cinemática del Movimiento Periódico y Magnitudes Fisiomecánicas</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            En física médica y fisiología, un <strong>movimiento periódico</strong> es todo fenómeno biofísico que se repite de manera idéntica en intervalos sucesivos y regulares de tiempo. Son ejemplos paradigmáticos las oscilaciones mecánicas del diafragma en la respiración eupneica, la fonación en las cuerdas vocales, la propagación de ondas de presión acústica en ecografía diagnóstica y los ritmos electrofisiológicos como el complejo $P\text{-}QRS\text{-}T$ del electrocardiograma ($\text{ECG}$).
+          </p>
+        </div>
+
+        <!-- Tarjetas de Formalización Teórica con LaTeX -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+
+          <!-- Amplitud -->
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <div class="flex items-center gap-2 text-sky-700 font-bold text-sm">
+              <span class="w-7 h-7 rounded-lg bg-sky-100 flex items-center justify-center text-xs">A</span>
+              Amplitud ($A$) y Relevancia Bioacústica
+            </div>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+              Es el módulo de la máxima elongación o desplazamiento escalar respecto al origen o posición central de equilibrio ($x = 0$):
+            </p>
+            <div class="my-3 text-center bg-white p-2.5 rounded-lg border border-slate-200 text-sm font-serif">
+              $$x_{\text{máx}} = A, \quad -A \le x(t) \le +A$$
+            </div>
+            <div class="text-[11px] text-slate-600 bg-sky-50 p-2.5 rounded-lg border border-sky-100">
+              <strong>🩺 Correlación Clínica:</strong> En audiometría y fonendoscopía, la amplitud de la oscilación sonora de la membrana timpánica o de la cápsula auscultatoria determina la <em>intensidad o volumen sonoro</em> ($I \propto A^2$). Un soplo cardíaco de grado IV presenta una oscilación elástica con mayor amplitud $A$ que un soplo tenue de grado I.
+            </div>
+          </div>
+
+          <!-- Período -->
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
+              <span class="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center text-xs">T</span>
+              Período ($T$) y Ciclo Fisiológico
+            </div>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+              Es el lapso de tiempo requerido por el sistema biológico o mecánico para completar una oscilación o ciclo cerrado idéntico:
+            </p>
+            <div class="my-3 text-center bg-white p-2.5 rounded-lg border border-slate-200 text-sm font-serif">
+              $$T = \frac{\Delta t}{N_{\text{ciclos}}} \quad [\text{s}]$$
+            </div>
+            <div class="text-[11px] text-slate-600 bg-indigo-50 p-2.5 rounded-lg border border-indigo-100">
+              <strong>🩺 Enfoque Gráfico:</strong> Se determina midiendo el tiempo transcurrido entre dos crestas consecutivas, o entre dos cruces sucesivos por cero con igual signo de la pendiente (es decir, en la misma dirección cinemática). En el $\text{ECG}$, el intervalo $R\text{-}R$ constituye el período cardíaco ($T_{\text{cardíaco}}$).
+            </div>
+          </div>
+
+          <!-- Frecuencia -->
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <div class="flex items-center gap-2 text-emerald-700 font-bold text-sm">
+              <span class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-xs">f</span>
+              Frecuencia ($f$) y Ritmicidad
+            </div>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+              Mide la tasa o número de ciclos oscilatorios completos efectuados por unidad de tiempo. Es el inverso estricto del período:
+            </p>
+            <div class="my-3 text-center bg-white p-2.5 rounded-lg border border-slate-200 text-sm font-serif">
+              $$f = \frac{1}{T} \quad \left[\text{Hz} = \frac{\text{ciclos}}{\text{s}} = \text{s}^{-1}\right]$$
+            </div>
+            <div class="text-[11px] text-slate-600 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100">
+              <strong>🩺 Aplicación Médica:</strong> La frecuencia cardíaca ($\text{FC}$) es $f_{\text{cardíaca}} \times 60$. Por ejemplo, un período $T = 0.8\text{ s}$ corresponde a $f = 1.25\text{ Hz} = 75\text{ latidos/minuto}$ (eucardia fisiológica en reposo).
+            </div>
+          </div>
+
+          <!-- Frecuencia Angular -->
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
+              <span class="w-7 h-7 rounded-lg bg-rose-100 flex items-center justify-center text-xs">$\omega$</span>
+              Frecuencia Angular o Pulsación ($\omega$)
+            </div>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+              Representa la velocidad de barrido angular de la fase armónica en el círculo de referencia asociado al MAS:
+            </p>
+            <div class="my-3 text-center bg-white p-2.5 rounded-lg border border-slate-200 text-sm font-serif">
+              $$\omega = 2\pi f = \frac{2\pi}{T} \quad [\text{rad/s}]$$
+            </div>
+            <div class="text-[11px] text-slate-600 bg-rose-50 p-2.5 rounded-lg border border-rose-100">
+              <strong>🩺 Ecuaciones Horarias:</strong> Permite describir algebraicamente la evolución temporal del oscilador como funciones sinusoidales puras: $x(t) = A\cos(\omega t + \phi_0)$.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Comparador Interactivo de Parámetros Cinemáticos -->
+        <div class="mt-8 pt-6 border-t border-slate-200">
+          <h3 class="text-sm font-bold text-slate-800 mb-3">Calculadora de Parámetros Cinemáticos y Conversor Fisiológico</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Período $T$ ingresado (s):</label>
+              <input type="number" id="calc-input-T" value="0.80" step="0.05" min="0.01" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-mono font-bold" oninput="updateCinematicCalc('T')">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Frecuencia $f$ resultante (Hz):</label>
+              <input type="number" id="calc-input-f" value="1.25" step="0.1" min="0.01" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-mono font-bold" oninput="updateCinematicCalc('f')">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Pulsación $\omega$ (rad/s):</label>
+              <input type="text" id="calc-result-w" value="7.85 rad/s" readonly class="w-full bg-slate-200/70 border border-slate-300 rounded-lg p-2 text-xs font-mono font-bold text-slate-700">
+            </div>
+          </div>
+          <p id="calc-clinical-note" class="text-xs text-sky-800 bg-sky-50 p-3 rounded-lg border border-sky-200 mt-3 font-medium">
+            💡 <strong>Interpretación:</strong> Un período de 0.80 s equivale a una frecuencia cardíaca de <strong>75 latidos/minuto</strong>, dentro del rango fisiológico normal de reposo de un adulto (60 - 100 lpm).
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SECCIÓN 3: MÓDULO 2 - DINÁMICA, LEY DE HOOKE Y NEWTON -->
+    <div id="view-mod2" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="max-w-3xl">
+          <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Unidad Didáctica 2</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Dinámica del MAS: Ley de Hooke y Deducción de la Ecuación Diferencial</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            La causa biomecánica del Movimiento Armónico Simple es la existencia de una <strong>fuerza neta restauradora o recuperadora elástica</strong>. En el modelo ideal horizontal libre de fricción, dicha fuerza es descrita con exactitud lineal por la <strong>Ley de Hooke</strong>.
+          </p>
+        </div>
+
+        <!-- Ecuación de Hooke -->
+        <div class="my-5 bg-gradient-to-r from-rose-50 to-amber-50 p-4 rounded-xl border border-rose-200 text-center">
+          <p class="text-xs text-rose-800 font-semibold mb-1">Fuerza Restauradora Elástica Unidimensional</p>
+          <div class="text-lg font-serif">
+            $$F_x = -k x$$
+          </div>
+          <p class="text-xs text-slate-600 mt-1">
+            Donde $k$ es la rigidez elástica $[\text{N/m}]$ y el signo menos ($-$) denota el carácter restaurador (la fuerza vectorial siempre se orienta hacia la posición central de equilibrio $x = 0$).
+          </p>
+        </div>
+
+        <!-- Análisis de los Tres Estados Clave -->
+        <h3 class="text-sm font-bold text-slate-900 mt-6 mb-3">Análisis Vectorial en los Tres Estados Clave:</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-xs text-rose-700">Estado 1: Elongación Positiva</span>
+              <span class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-mono">$x > 0$</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              El resorte o tejido elástico se encuentra estirado hacia la derecha. La fuerza elástica recuperadora se opone al estiramiento:
+            </p>
+            <div class="my-2 p-2 bg-white rounded border border-slate-200 text-xs text-center font-mono font-bold text-rose-600">
+              $F_x = -k(+x) < 0 \implies \vec{F}$ hacia la izquierda ($\leftarrow$)
+            </div>
+            <p class="text-[11px] text-slate-500">
+              La aceleración es negativa: el cuerpo frena si se aleja del centro o acelera si regresa a él.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-xs text-emerald-700">Estado 2: Posición de Equilibrio</span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">$x = 0$</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              El resorte no está deformado (longitud natural). No existe tensión ni compresión en la estructura elástica:
+            </p>
+            <div class="my-2 p-2 bg-white rounded border border-slate-200 text-xs text-center font-mono font-bold text-emerald-600">
+              $F_x = -k(0) = 0 \implies \sum F_x = 0$
+            </div>
+            <p class="text-[11px] text-slate-500">
+              La aceleración es instantáneamente nula ($a_x = 0$). Por inercia mecánica, la masa atraviesa el centro con su <strong>velocidad máxima</strong>.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-xs text-sky-700">Estado 3: Compresión Elástica</span>
+              <span class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-mono">$x < 0$</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              El resorte se comprime hacia la izquierda respecto a su punto de reposo. Ejerce un empuje recuperador hacia adelante:
+            </p>
+            <div class="my-2 p-2 bg-white rounded border border-slate-200 text-xs text-center font-mono font-bold text-sky-600">
+              $F_x = -k(-x) > 0 \implies \vec{F}$ hacia la derecha ($\rightarrow$)
+            </div>
+            <p class="text-[11px] text-slate-500">
+              La aceleración es positiva ($a_x > 0$), forzando al cuerpo a retornar hacia la derecha.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Deducción de Newton y Ecuación Diferencial -->
+        <div class="mt-8 pt-6 border-t border-slate-200">
+          <h3 class="text-sm font-bold text-slate-900 mb-3">Segunda Ley de Newton y Ecuación Diferencial del Movimiento</h3>
+          <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-4">
+            <p class="text-xs text-slate-700 leading-relaxed">
+              Aplicando la Segunda Ley fundamental de Newton sobre el eje horizontal unidimensional libre de rozamiento:
+            </p>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 text-center font-serif text-sm">
+              $$\sum F_x = m a_x \implies -k x = m \frac{d^2 x}{dt^2}$$
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              Reordenando e introduciendo la definición de frecuencia angular intrínseca:
+            </p>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 text-center font-serif text-sm">
+              $$a_x(t) = \frac{d^2 x}{dt^2} = -\left(\frac{k}{m}\right) x(t) = -\omega^2 x(t)$$
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              Esta es la <strong>condición matemática estricta del MAS</strong>: la aceleración del sistema es en todo instante directamente proporcional al desplazamiento ($x$) y apunta en sentido exactamente contrario a él.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+              <div class="p-3 bg-white rounded-lg border border-slate-200 text-center">
+                <span class="text-slate-500 block text-[11px]">Pulsación natural intrínseca:</span>
+                <span class="text-sm font-serif font-bold text-slate-900">$$\omega = \sqrt{\frac{k}{m}} \quad [\text{rad/s}]$$</span>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-slate-200 text-center">
+                <span class="text-slate-500 block text-[11px]">Período de oscilación elástica:</span>
+                <span class="text-sm font-serif font-bold text-slate-900">$$T = 2\pi\sqrt{\frac{m}{k}} \quad [\text{s}]$$</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- SECCIÓN 4: MÓDULO 3 - CONSERVACIÓN DE LA ENERGÍA MECÁNICA -->
+    <div id="view-mod3" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="max-w-3xl">
+          <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Unidad Didáctica 3</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Conservación y Transformación de la Energía Mecánica en el MAS</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            En un oscilador armónico ideal sin fuerzas disipativas (fricción o resistencia viscosa nula), la <strong>energía mecánica total ($E$) se conserva estrictamente constante</strong>, produciéndose un intercambio dinámico continuo y armónico entre la <strong>energía cinética ($K$)</strong> de la masa y la <strong>energía potencial elástica ($U$)</strong> del resorte.
+          </p>
+        </div>
+
+        <!-- Fórmulas Energéticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+          <div class="bg-sky-50 rounded-xl p-4 border border-sky-100 text-center">
+            <span class="text-xs font-bold text-sky-800 uppercase tracking-wide">Energía Cinética ($K$)</span>
+            <div class="my-2 font-serif text-base text-sky-900">
+              $$K = \frac{1}{2} m v^2$$
+            </div>
+            <p class="text-[11px] text-sky-700">Asociada al movimiento y velocidad de la masa tisular.</p>
+          </div>
+          <div class="bg-amber-50 rounded-xl p-4 border border-amber-100 text-center">
+            <span class="text-xs font-bold text-amber-800 uppercase tracking-wide">Energía Potencial ($U$)</span>
+            <div class="my-2 font-serif text-base text-amber-900">
+              $$U = \frac{1}{2} k x^2$$
+            </div>
+            <p class="text-[11px] text-amber-700">Almacenada por la deformación elástica de las fibras o resortes.</p>
+          </div>
+          <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100 text-center">
+            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">Energía Total ($E$)</span>
+            <div class="my-2 font-serif text-base text-emerald-900">
+              $$E = K + U = \frac{1}{2} k A^2 = \text{cte}$$
+            </div>
+            <p class="text-[11px] text-emerald-700">Constante e invariante para toda posición $x(t)$.</p>
+          </div>
+        </div>
+
+        <!-- Tabla de Puntos Singulares del Recorrido -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border border-slate-200 rounded-xl overflow-hidden">
+            <thead class="bg-slate-100 text-slate-700 uppercase font-semibold">
+              <tr>
+                <th class="p-3">Posición ($x$)</th>
+                <th class="p-3">Velocidad ($v_x$)</th>
+                <th class="p-3">Aceleración ($a_x$)</th>
+                <th class="p-3">Energía Cinética ($K$)</th>
+                <th class="p-3">Energía Potencial ($U$)</th>
+                <th class="p-3">Estado Energético</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-mono font-bold text-slate-900">$x = +A$ (Extremo derecho)</td>
+                <td class="p-3 font-mono text-slate-600">$v = 0$</td>
+                <td class="p-3 font-mono text-rose-600">$a = -\omega^2 A$ (Máx. neg.)</td>
+                <td class="p-3 font-mono text-sky-600">$K = 0$</td>
+                <td class="p-3 font-mono text-amber-600 font-bold">$U = \frac{1}{2}kA^2 = E$</td>
+                <td class="p-3 font-medium text-amber-700">100% Potencial pura</td>
+              </tr>
+              <tr class="hover:bg-slate-50 bg-slate-50/50">
+                <td class="p-3 font-mono font-bold text-slate-900">$x = 0$ (Centro de equilibrio)</td>
+                <td class="p-3 font-mono text-sky-600 font-bold">$v_{\text{máx}} = \pm \omega A$</td>
+                <td class="p-3 font-mono text-slate-600">$a = 0$</td>
+                <td class="p-3 font-mono text-sky-600 font-bold">$K = \frac{1}{2}mv_{\text{máx}}^2 = E$</td>
+                <td class="p-3 font-mono text-amber-600">$U = 0$</td>
+                <td class="p-3 font-medium text-sky-700">100% Cinética pura</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-mono font-bold text-slate-900">$x = -A$ (Extremo izquierdo)</td>
+                <td class="p-3 font-mono text-slate-600">$v = 0$</td>
+                <td class="p-3 font-mono text-rose-600">$a = +\omega^2 A$ (Máx. pos.)</td>
+                <td class="p-3 font-mono text-sky-600">$K = 0$</td>
+                <td class="p-3 font-mono text-amber-600 font-bold">$U = \frac{1}{2}kA^2 = E$</td>
+                <td class="p-3 font-medium text-amber-700">100% Potencial pura</td>
+              </tr>
+              <tr class="hover:bg-slate-50 bg-slate-50/50">
+                <td class="p-3 font-mono text-slate-700">$0 < |x| < A$ (Intermedio)</td>
+                <td class="p-3 font-mono text-slate-700">$|v| = \omega\sqrt{A^2-x^2}$</td>
+                <td class="p-3 font-mono text-slate-700">$|a| = \omega^2 |x|$</td>
+                <td class="p-3 font-mono text-sky-700">$0 < K < E$</td>
+                <td class="p-3 font-mono text-amber-700">$0 < U < E$</td>
+                <td class="p-3 font-medium text-emerald-700">Intercambio armónico continuo</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Deducción de la velocidad en función de la posición -->
+        <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Deducción de la Velocidad como Función de la Posición $v(x)$:</h4>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            A partir de la invariancia mecánica: $E = \frac{1}{2}mv^2 + \frac{1}{2}kx^2 = \frac{1}{2}kA^2$. Despejando la velocidad cuadrática:
+          </p>
+          <div class="bg-white p-3 rounded-lg border border-slate-200 text-center font-serif text-sm">
+            $$\frac{1}{2}mv^2 = \frac{1}{2}k(A^2 - x^2) \implies v(x) = \pm \sqrt{\frac{k}{m}(A^2 - x^2)} = \pm \omega \sqrt{A^2 - x^2}$$
+          </div>
+          <p class="text-xs text-slate-600 mt-2">
+            Esta fórmula fundamental permite a los médicos calcular la velocidad del flujo sanguíneo o del oscilador tisular en cualquier punto del recorrido sin necesidad de conocer el tiempo transcurrido.
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SECCIÓN 5: MÓDULO 4 - APLICACIONES CLÍNICAS Y BIOMÉDICAS -->
+    <div id="view-mod4" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+        <div class="max-w-3xl">
+          <span class="text-xs font-bold text-clinical-500 uppercase tracking-wider">Unidad Didáctica 4</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Biofísica Médica y Aplicaciones Biomecánicas del Movimiento Periódico</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            El dominio del movimiento armónico simple y las oscilaciones mecánicas es imprescindible en la práctica clínica moderna para comprender el diagnóstico por imágenes, la bioacústica de auscultación, el monitoreo hemodinámico y la biomecánica deportiva y ortopédica.
+          </p>
+        </div>
+
+        <!-- 3 Casos Clínicos Detallados -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- Caso 1: Bioacústica y Ultrasonido -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-lg mb-3">
+                🔊
+              </div>
+              <h3 class="text-base font-bold text-slate-900">1. Bioacústica, Fonendoscopía y Ultrasonido</h3>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                El sonido es una <strong>onda mecánica longitudinal periódica</strong> producida por la oscilación de moléculas en el medio tisular biológico.
+              </p>
+              <div class="my-3 space-y-1.5 text-xs text-slate-700">
+                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <strong>Fonendoscopía:</strong> Los ruidos cardíacos ($R_1$ cierre auriculoventricular y $R_2$ cierre semilunar) tienen frecuencias de $20\text{ a }200\text{ Hz}$. La membrana del estetoscopio transmite las oscilaciones mecánicas del tórax.
+                </div>
+                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <strong>Ultrasonido Diagnóstico (Ecografía):</strong> Transductores piezoeléctricos vibran a frecuencias ultrasónicas ($2\text{ a }15\text{ MHz}$):
+                  $$\lambda = \frac{v_{\text{sonido}}}{f} = \frac{1540\text{ m/s}}{f}$$
+                </div>
+              </div>
+            </div>
+            <button onclick="applyPreset('ultrasound'); switchTab('lab');" class="mt-4 w-full py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-semibold transition">
+              Cargar preset en el simulador →
+            </button>
+          </div>
+
+          <!-- Caso 2: Cardiología y ECG -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-lg mb-3">
+                ❤️
+              </div>
+              <h3 class="text-base font-bold text-slate-900">2. Cardiología, Ciclo Cardíaco y ECG</h3>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                El corazón opera como una <strong>bomba electro-mecánica periódica cuasi-armónica</strong> con fases rítmicas de sístole y diástole.
+              </p>
+              <div class="my-3 space-y-1.5 text-xs text-slate-700">
+                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <strong>Período y Frecuencia:</strong>
+                  $$\text{FC (lpm)} = \frac{60}{T_{\text{ciclo}}} = 60 \cdot f$$
+                  Para $T = 0.8\text{ s} \implies \text{FC} = 75\text{ lpm}$.
+                </div>
+                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <strong>Trazado ECG:</strong> Las ondas periódicas $P$ (despolarización auricular), complejo $QRS$ (despolarización ventricular) y $T$ (repolarización) se analizan en función de su período temporal para diagnosticar bradicardias, taquicardias o arritmias.
+                </div>
+              </div>
+            </div>
+            <button onclick="applyPreset('ecg'); switchTab('lab');" class="mt-4 w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition">
+              Simular Ciclo Cardíaco →
+            </button>
+          </div>
+
+          <!-- Caso 3: Biomecánica Musculoesquelética -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg mb-3">
+                🦵
+              </div>
+              <h3 class="text-base font-bold text-slate-900">3. Biomecánica Tendinosa y Amortiguamiento</h3>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                Los tendones y ligamentos humanos poseen comportamiento <strong>viscoelástico</strong> (modelo de Kelvin-Voigt y Maxwell).
+              </p>
+              <div class="my-3 space-y-1.5 text-xs text-slate-700">
+                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <strong>Tendón de Aquiles:</strong> Actúa como un resorte biológico gigante ($k \approx 20000\text{--}40000\text{ N/m}$) que almacena energía elástica $U = \frac{1}{2}k x^2$ en la fase de apoyo de la marcha y la devuelve para impulsar el cuerpo hacia adelante.
+                </div>
+                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <strong>Histéresis y Amortiguamiento ($\gamma$):</strong> Parte de la energía mecánica se disipa como calor metabólico, protegiendo al hueso y músculo de tensiones de impacto lesivas.
+                </div>
+              </div>
+            </div>
+            <button onclick="applyPreset('tendon'); switchTab('lab');" class="mt-4 w-full py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold transition">
+              Simular Tendón Viscoelástico →
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Evaluador Didáctico de Ingreso a Medicina UCCuyo -->
+        <div class="mt-8 pt-6 border-t border-slate-200 bg-slate-50 rounded-2xl p-6 border">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="text-[11px] font-bold text-sky-700 uppercase tracking-wider">Entrenamiento para Examen de Ingreso</span>
+              <h4 class="text-base font-bold text-slate-900">Problema Clínico de Aplicación Guiada</h4>
+            </div>
+            <span class="text-xs bg-sky-100 text-sky-800 px-3 py-1 rounded-full font-semibold">Biofísica UCCuyo</span>
+          </div>
+
+          <p class="text-xs text-slate-700 leading-relaxed bg-white p-4 rounded-xl border border-slate-200 mb-4">
+            <strong>Enunciado:</strong> En un ensayo biomecánico in vitro, se evalúa la elasticidad de un injerto tendinoso de <em>flexor superficial</em> acoplado a un transductor de masa $m = 0.50\text{ kg}$. Al elongarlo $A = 0.04\text{ m}$ ($4\text{ cm}$) respecto a su longitud de equilibrio, oscila con un período $T = 0.20\text{ s}$. 
+            <br><br>
+            <strong>Consigna:</strong> Determine:
+            <br>
+            <strong>a)</strong> La constante elástica de rigidez $k$ del tendón.
+            <br>
+            <strong>b)</strong> La velocidad máxima $v_{\text{máx}}$ al pasar por la posición de equilibrio $x = 0$.
+            <br>
+            <strong>c)</strong> La energía mecánica total $E$ acumulada en el injerto.
+          </p>
+
+          <div class="flex gap-2">
+            <button onclick="toggleAnswer()" id="btn-solution" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition">
+              Mostrar Resolución Paso a Paso con Fórmulas
+            </button>
+          </div>
+
+          <div id="solution-box" class="hidden mt-4 space-y-3 bg-white p-4 rounded-xl border border-slate-200 text-xs">
+            <div class="p-3 bg-slate-50 rounded-lg">
+              <span class="font-bold text-slate-900">Paso 1: Frecuencia angular $\omega$ y constante $k$:</span>
+              <div class="my-2 font-serif">
+                $$\omega = \frac{2\pi}{T} = \frac{2\pi}{0.20\text{ s}} = 10\pi \approx 31.42\text{ rad/s}$$
+                $$\omega = \sqrt{\frac{k}{m}} \implies k = m \cdot \omega^2 = (0.50\text{ kg}) \cdot (31.42\text{ rad/s})^2 \approx 493.48\text{ N/m}$$
+              </div>
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-lg">
+              <span class="font-bold text-slate-900">Paso 2: Velocidad máxima en el equilibrio ($x = 0$):</span>
+              <div class="my-2 font-serif">
+                $$v_{\text{máx}} = \omega A = (31.42\text{ rad/s}) \cdot (0.04\text{ m}) \approx 1.257\text{ m/s}$$
+              </div>
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-lg">
+              <span class="font-bold text-slate-900">Paso 3: Conservación de la energía mecánica total ($E$):</span>
+              <div class="my-2 font-serif">
+                $$E = \frac{1}{2} k A^2 = \frac{1}{2} (493.48\text{ N/m}) \cdot (0.04\text{ m})^2 \approx 0.395\text{ J}$$
+                Comprobación con energía cinética máxima:
+                $$E = \frac{1}{2} m v_{\text{máx}}^2 = \frac{1}{2} (0.50\text{ kg}) \cdot (1.257\text{ m/s})^2 \approx 0.395\text{ J} \quad \text{(Coincidencia idéntica)}$$
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    </div>
+  </main>
+
+  <!-- Pie de Página Institucional -->
+  <footer class="bg-white border-t border-gray-200 py-3 text-center text-xs text-gray-500 font-medium">
+    Desarrollado por vesalio - Todos los derechos reservados
+  </footer>
+
+  <!-- Modal: Vademécum Teórico Biofísica Mecánica y MAS -->
+  <div id="modal-formulas" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white max-w-3xl w-full rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="bg-accent p-4 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-book-bookmark text-xl"></i>
+          <h3 class="font-bold text-base">Vademécum Teórico: Movimiento Periódico, MAS y Biofísica</h3>
+        </div>
+        <button onclick="closeFormulasModal()" class="text-white hover:text-gray-200 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      
+      <div class="p-6 overflow-y-auto space-y-6 text-xs md:text-sm text-gray-700 custom-scroll leading-relaxed">
+        
+        <!-- 1. Cinemática y Parámetros Fundamentales -->
+        <div>
+          <h4 class="font-bold text-accent text-sm mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-wave-square"></i> 1. Cinemática del Movimiento Periódico
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <span class="font-bold text-slate-800">Frecuencia y Período:</span>
+              <div class="text-center my-1 font-mono text-accent">
+                $$f = \frac{1}{T} \quad [\text{Hz} = \text{s}^{-1}]$$
+              </div>
+              <p class="text-[11px] text-gray-600">Número de ciclos por unidad de tiempo. $T$ es el tiempo de una oscilación completa.</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <span class="font-bold text-slate-800">Frecuencia Angular / Pulsación:</span>
+              <div class="text-center my-1 font-mono text-accent">
+                $$\omega = 2\pi f = \frac{2\pi}{T} \quad [\text{rad/s}]$$
+              </div>
+              <p class="text-[11px] text-gray-600">Velocidad de barrido de fase. Para un oscilador resorte-masa: $\omega = \sqrt{\frac{k}{m}}$.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Dinámica del MAS y Ley de Hooke -->
+        <div>
+          <h4 class="font-bold text-accent text-sm mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-arrows-left-right-to-line"></i> 2. Dinámica de Hooke y 2ª Ley de Newton
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <span class="font-bold text-slate-800">Fuerza Restauradora Elástica:</span>
+              <div class="text-center my-1 font-mono text-accent">
+                $$F_x = -k x$$
+              </div>
+              <p class="text-[11px] text-gray-600">El signo negativo indica que la fuerza elástica siempre apunta hacia el punto de equilibrio ($x = 0$).</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <span class="font-bold text-slate-800">Aceleración en el MAS:</span>
+              <div class="text-center my-1 font-mono text-accent">
+                $$a_x = -\frac{k}{m} x = -\omega^2 x$$
+              </div>
+              <p class="text-[11px] text-gray-600">La aceleración es máxima y opuesta en los extremos ($x = \pm A$) y se anula en el equilibrio.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Conservación de la Energía Mecánica -->
+        <div>
+          <h4 class="font-bold text-accent text-sm mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-chart-line"></i> 3. Conservación y Transformación Energética
+          </h4>
+          <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-2 text-xs">
+            <div class="text-center font-mono text-accent">
+              $$E = K + U = \frac{1}{2} m v^2 + \frac{1}{2} k x^2 = \frac{1}{2} k A^2 = \frac{1}{2} m v_{\text{max}}^2 = \text{cte}$$
+            </div>
+            <p><strong>En los extremos ($x = \pm A$):</strong> $v = 0 \implies K = 0 \implies E = U_{\text{max}} = \frac{1}{2} k A^2$.</p>
+            <p><strong>En el equilibrio ($x = 0$):</strong> $U = 0 \implies E = K_{\text{max}} = \frac{1}{2} m v_{\text{max}}^2$ con $v_{\text{max}} = \omega A$.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+        <button onclick="closeFormulasModal()" class="px-5 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover text-xs transition shadow-sm">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Guía de Uso del Simulador -->
+  <div id="modal-tutorial" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white max-w-4xl w-full rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="bg-accent p-4 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-question text-xl"></i>
+          <h3 class="font-bold text-base">Guía de Uso del Simulador: Física Médica y Biofísica</h3>
+        </div>
+        <button onclick="closeTutorial()" class="text-white hover:text-gray-200 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      
+      <div class="p-6 overflow-y-auto space-y-6 text-xs md:text-sm text-gray-700 custom-scroll leading-relaxed">
+        
+        <div>
+          <h4 class="font-bold text-accent text-sm mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-compass"></i> 1. Navegación Modular Lateral
+          </h4>
+          <p class="text-gray-600">
+            Utiliza la barra lateral izquierda persistente para alternar entre el laboratorio dinámico en vivo y los 4 módulos conceptuales y clínicos. El simulador preserva su estado físico continuo en todo momento sin interrupciones.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-accent text-sm mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-sliders"></i> 2. Módulos y Laboratorios Activos
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-1">
+              <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                <i class="fa-solid fa-flask-vial text-accent"></i> 1. Simulador Dinámico en Vivo
+              </div>
+              <p class="text-gray-600">
+                • <strong>Arrastre táctil/mouse:</strong> Haz clic sobre la masa para desplazarla libremente y fijar una elongación inicial personalizada.<br>
+                • <strong>Vectores en tiempo real:</strong> Inspecciona el vector velocidad $\vec{v}$ (azul), aceleración $\vec{a}$ (rojo) y fuerza recuperadora $\vec{F}$ (ámbar).<br>
+                • <strong>Presets clínicos:</strong> Alterna al instante entre oscilador ideal, ciclo cardíaco (75 lpm), onda acústica y tendón de Aquiles.<br>
+                • <strong>Osciloscopio multicanal:</strong> Traza las ondas $x(t)$, $v(t)$ y $a(t)$ con selectores individuales de visualización.<br>
+                • <strong>Bioacústica interactiva:</strong> Activa el sintetizador de audio para escuchar la frecuencia acústica proporcional al período del sistema.
+              </p>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-1">
+              <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                <i class="fa-solid fa-wave-square text-accent"></i> 2. Cinemática del MAS
+              </div>
+              <p class="text-gray-600">
+                • Formalización matemática rigurosa con KaTeX de amplitud ($A$), período ($T$), frecuencia ($f = 1/T$) y pulsación ($\omega = 2\pi f$).<br>
+                • <strong>Calculadora y conversor fisiológico:</strong> Ingresa un período $T$ o frecuencia $f$ para calcular automáticamente $\omega$ y su equivalencia directa en <em>latidos por minuto</em> ($\text{lpm}$) del ciclo cardíaco humano.
+              </p>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-1">
+              <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                <i class="fa-solid fa-arrows-left-right-to-line text-accent"></i> 3. Hooke & Dinámica Newtoniana
+              </div>
+              <p class="text-gray-600">
+                • Análisis vectorial exhaustivo en los tres estados cardinales: elongación ($x > 0$), equilibrio ($x = 0$) y compresión elástica ($x < 0$).<br>
+                • Gráfica continua interactiva de fuerza restauradora $F_x(x)$ con pendiente negativa igual a $-k$.<br>
+                • Deducción analítica de la ecuación diferencial del MAS a partir de la 2ª Ley de Newton: $a_x = -(k/m)x = -\omega^2 x$.
+              </p>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-1">
+              <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                <i class="fa-solid fa-chart-line text-accent"></i> 4. Conservación de la Energía
+              </div>
+              <p class="text-gray-600">
+                • <strong>Parábolas superpuestas $E(x)$:</strong> Curva cóncava superior de energía potencial $U(x) = \frac{1}{2}kx^2$, curva cóncava inferior de energía cinética $K(x) = E - \frac{1}{2}kx^2$ y línea recta horizontal de energía total constante ($E$).<br>
+                • <strong>Barras de energía dinámica:</strong> Muestran en tiempo real la transformación porcentual armónica entre $K$ y $U$, con cálculo de velocidad puntual $v(x) = \pm\omega\sqrt{A^2-x^2}$.
+              </p>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-1 md:col-span-2">
+              <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                <i class="fa-solid fa-heart-pulse text-accent"></i> 5. Casos Clínicos y Biomecánica
+              </div>
+              <p class="text-gray-600">
+                • <strong>Bioacústica & Ecografía:</strong> Principio de transductores piezoeléctricos ($\lambda = v_{\text{sonido}}/f$, con $v = 1540\text{ m/s}$) y fonendoscopía cardíaca ($R_1, R_2$).<br>
+                • <strong>Cardiología & ECG:</strong> Ritmicidad periódica miocárdica y correlato con las ondas $P\text{-}QRS\text{-}T$.<br>
+                • <strong>Biomecánica tendinosa:</strong> Ensayo in vitro sobre injerto tendinoso de flexor superficial con <em>problema de examen guiado y resolución analítica paso a paso</em> (cálculo de $k$, $v_{\text{máx}}$ y $E$).
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-accent text-sm mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-graduation-cap"></i> 3. Claves de Examen para el Ingreso a Medicina UCCuyo
+          </h4>
+          <ul class="list-disc list-inside space-y-1 text-xs text-gray-600">
+            <li>En los puntos de retorno ($x = \pm A$): la masa se frena momentáneamente ($v = 0 \implies K = 0$), la aceleración y la fuerza elástica son máximas ($|a| = \omega^2 A$, $|F| = kA$) y toda la energía es potencial pura ($E = U_{\text{max}}$).</li>
+            <li>Al cruzar el punto de equilibrio ($x = 0$): la deformación elástica es nula ($F = 0, a = 0$), la velocidad alcanza su cenit ($v_{\text{max}} = \omega A$) y la energía es 100% cinética ($E = K_{\text{max}}$).</li>
+            <li>En el MAS ideal sin fricción, la frecuencia intrínseca $\omega = \sqrt{k/m}$ y el período $T = 2\pi\sqrt{m/k}$ son totalmente independientes de la amplitud inicial $A$.</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+        <button onclick="closeTutorial()" class="px-5 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover text-xs transition shadow-sm">
+          ¡Entendido, Comenzar a Estudiar!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LÓGICA DE PROGRAMACIÓN Y FÍSICA EN JAVASCRIPT -->
+  <script>
+    /* =========================================================================
+       1. ESTADO GLOBAL DE LA SIMULACIÓN FÍSICA (M.A.S. Y AMORTIGUAMIENTO)
+       ========================================================================= */
+    const state = {
+      // Parámetros Físicos
+      m: 1.0,         // masa en kg
+      k: 20.0,        // constante del resorte en N/m
+      A: 0.8,         // amplitud inicial en metros
+      damping: 0.0,   // coeficiente de fricción / amortiguamiento gamma en s^-1
+      
+      // Variables de Estado Dinámico
+      x: 0.8,         // posición actual x en m
+      v: 0.0,         // velocidad vx en m/s
+      a: 0.0,         // aceleración ax en m/s^2
+      F: 0.0,         // fuerza elástica Fx en N
+      t: 0.0,         // tiempo en segundos
+      
+      // Energías en Joules
+      K: 0.0,         // Cinética
+      U: 0.0,         // Potencial
+      E: 0.0,         // Mecánica total
+      
+      // Estado de la Simulación
+      isPlaying: true,
+      timeStep: 0.016, // dt por frame (aprox 60 FPS)
+      speedMultiplier: 1.0,
+      
+      // Historial para Osciloscopio
+      history: [],
+      maxHistoryPoints: 500,
+      
+      // Interacción con mouse / arrastre
+      isDragging: false,
+      
+      // Audio bioacústico
+      audioEnabled: false,
+      audioCtx: null,
+      oscillatorNode: null,
+      gainNode: null
+    };
+
+    // Referencias al DOM
+    const springCanvas = document.getElementById('springCanvas');
+    const oscilloCanvas = document.getElementById('oscilloCanvas');
+    const energyCurveCanvas = document.getElementById('energyCurveCanvas');
+    const hookeCurveCanvas = document.getElementById('hookeCurveCanvas');
+
+    const ctxSpring = springCanvas.getContext('2d');
+    const ctxOscillo = oscilloCanvas.getContext('2d');
+    const ctxEnergy = energyCurveCanvas.getContext('2d');
+    const ctxHooke = hookeCurveCanvas.getContext('2d');
+
+    /* Modal Handlers */
+    function openFormulasModal() {
+      const modal = document.getElementById('modal-formulas');
+      if (modal) {
+        modal.classList.remove('hidden');
+        try {
+          if (typeof renderMathInElement === 'function') {
+            renderMathInElement(modal, {
+              delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+              ],
+              throwOnError: false
+            });
+          }
+        } catch (e) {
+          console.warn('KaTeX render warning:', e);
+        }
+      }
+    }
+
+    function closeFormulasModal() {
+      const modal = document.getElementById('modal-formulas');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function openTutorial() {
+      const modal = document.getElementById('modal-tutorial');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeTutorial() {
+      const modal = document.getElementById('modal-tutorial');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    /* Math rendering trigger */
+    function renderMathWhenReady() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false }
+          ],
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'header'],
+          ignoredClasses: ['katex', 'katex-html', 'katex-mathml', 'ignore-math', 'no-math'],
+          throwOnError: false
+        });
+      }
+    }
+
+    /* =========================================================================
+       2. INICIALIZACIÓN Y GESTIÓN DE PESTAÑAS (SIDEBAR UCCUYO)
+       ========================================================================= */
+    function switchTab(tabId) {
+      const views = ['lab', 'mod1', 'mod2', 'mod3', 'mod4'];
+      views.forEach(id => {
+        const el = document.getElementById(`view-${id}`);
+        if (el) {
+          if (id === tabId) {
+            el.classList.remove('hidden');
+          } else {
+            el.classList.add('hidden');
+          }
+        }
+      });
+
+      document.querySelectorAll('#navTabs .nav-btn').forEach(btn => {
+        const isSelected = btn.getAttribute('data-tab') === tabId;
+        const isLast = btn.getAttribute('data-last') === 'true';
+        const borderClass = isLast ? ' border-t lg:border-t border-gray-100' : '';
+        
+        if (isSelected) {
+          btn.className = "nav-btn bg-accent text-white flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm flex items-center gap-2" + borderClass;
+        } else {
+          btn.className = "nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2" + borderClass;
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Reajustar canvas en caso de cambio a vista lab
+      if (tabId === 'lab') {
+        setTimeout(handleResize, 50);
+      }
+
+      // Renderizar fórmulas de KaTeX cuando se cambia de pestaña
+      setTimeout(renderMathWhenReady, 50);
+    }
+
+    function toggleAnswer() {
+      const box = document.getElementById('solution-box');
+      const btn = document.getElementById('btn-solution');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        btn.textContent = 'Ocultar Resolución';
+      } else {
+        box.classList.add('hidden');
+        btn.textContent = 'Mostrar Resolución Paso a Paso con Fórmulas';
+      }
+    }
+
+    /* =========================================================================
+       3. CÁLCULOS DINÁMICOS Y NUMÉRICOS (INTEGRADOR RUNGE-KUTTA / VERLET)
+       ========================================================================= */
+    function computeDynamics(xPos, vVel) {
+      // Ley de Hooke con amortiguamiento: F = -k*x - gamma*m*v
+      const F_hooke = -state.k * xPos;
+      const F_fric = -state.damping * state.m * vVel;
+      const F_net = F_hooke + F_fric;
+      const accel = F_net / state.m;
+      return { F_net, accel };
+    }
+
+    function updatePhysicsStep(dt) {
+      if (state.isDragging) return;
+
+      // Integración Runge-Kutta 4to Orden (RK4) para máxima precisión numérica y conservación de energía
+      const k1_x = state.v;
+      const dyn1 = computeDynamics(state.x, state.v);
+      const k1_v = dyn1.accel;
+
+      const k2_x = state.v + 0.5 * dt * k1_v;
+      const dyn2 = computeDynamics(state.x + 0.5 * dt * k1_x, k2_x);
+      const k2_v = dyn2.accel;
+
+      const k3_x = state.v + 0.5 * dt * k2_v;
+      const dyn3 = computeDynamics(state.x + 0.5 * dt * k2_x, k3_x);
+      const k3_v = dyn3.accel;
+
+      const k4_x = state.v + dt * k3_v;
+      const dyn4 = computeDynamics(state.x + dt * k3_x, k4_x);
+      const k4_v = dyn4.accel;
+
+      state.x += (dt / 6) * (k1_x + 2 * k2_x + 2 * k3_x + k4_x);
+      state.v += (dt / 6) * (k1_v + 2 * k2_v + 2 * k3_v + k4_v);
+
+      const finalDyn = computeDynamics(state.x, state.v);
+      state.a = finalDyn.accel;
+      state.F = -state.k * state.x; // Fuerza restauradora elástica
+      state.t += dt;
+
+      // Energías
+      state.K = 0.5 * state.m * state.v * state.v;
+      state.U = 0.5 * state.k * state.x * state.x;
+      state.E = state.K + state.U;
+
+      // Registrar historial de osciloscopio
+      state.history.push({
+        t: state.t,
+        x: state.x,
+        v: state.v,
+        a: state.a
+      });
+      if (state.history.length > state.maxHistoryPoints) {
+        state.history.shift();
+      }
+
+      // Sincronizar audio bioacústico en tiempo real si está activo
+      if (state.audioEnabled && state.oscillatorNode && state.gainNode) {
+        // La frecuencia base cambia según k y m, modulada armónicamente
+        const baseFreq = (Math.sqrt(state.k / state.m) / (2 * Math.PI)) * 120 + 80;
+        state.oscillatorNode.frequency.setValueAtTime(Math.max(40, baseFreq), state.audioCtx.currentTime);
+        
+        // El volumen está modulado por la energía instantánea / amplitud
+        const targetVol = Math.min(0.25, Math.abs(state.x / state.A) * 0.2);
+        state.gainNode.gain.setValueAtTime(targetVol, state.audioCtx.currentTime);
+      }
+    }
+
+    /* =========================================================================
+       4. BIOACÚSTICA CON WEB AUDIO API
+       ========================================================================= */
+    function toggleAudio() {
+      if (!state.audioEnabled) {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          state.audioCtx = new AudioContext();
+          state.oscillatorNode = state.audioCtx.createOscillator();
+          state.gainNode = state.audioCtx.createGain();
+
+          state.oscillatorNode.type = 'sine'; // Onda senoidal pura de MAS
+          const freq = (Math.sqrt(state.k / state.m) / (2 * Math.PI)) * 120 + 80;
+          state.oscillatorNode.frequency.setValueAtTime(freq, state.audioCtx.currentTime);
+          state.gainNode.gain.setValueAtTime(0.08, state.audioCtx.currentTime);
+
+          state.oscillatorNode.connect(state.gainNode);
+          state.gainNode.connect(state.audioCtx.destination);
+          state.oscillatorNode.start();
+
+          state.audioEnabled = true;
+          document.getElementById('label-sound').textContent = 'Bioacústica: ON';
+          document.getElementById('btn-sound').classList.add('bg-amber-100', 'text-amber-800');
+          document.getElementById('icon-sound').classList.add('text-amber-600');
+        } catch (e) {
+          console.error("Audio API error:", e);
+        }
+      } else {
+        if (state.oscillatorNode) {
+          state.oscillatorNode.stop();
+          state.oscillatorNode.disconnect();
+        }
+        if (state.audioCtx) {
+          state.audioCtx.close();
+        }
+        state.audioEnabled = false;
+        document.getElementById('label-sound').textContent = 'Bioacústica: OFF';
+        document.getElementById('btn-sound').classList.remove('bg-amber-100', 'text-amber-800');
+        document.getElementById('icon-sound').classList.remove('text-amber-600');
+      }
+    }
+
+    /* =========================================================================
+       5. DIBUJO EN CANVAS: OSCILADOR MASA-RESORTE CON VECTORES DINÁMICOS
+       ========================================================================= */
+    function drawSpringAndMass() {
+      const w = springCanvas.width;
+      const h = springCanvas.height;
+      ctxSpring.clearRect(0, 0, w, h);
+
+      const centerY = h * 0.52;
+      const wallX = 60;
+      const centerX = w * 0.52; // Posición de x = 0 (equilibrio)
+      const scalePixelsPerMeter = (w * 0.38) / 1.5; // Escala visual adaptable
+
+      const blockX = centerX + state.x * scalePixelsPerMeter;
+      const blockWidth = 55 + Math.min(25, state.m * 5);
+      const blockHeight = 55 + Math.min(25, state.m * 5);
+
+      // 1. Dibujar Pared Izquierda de Anclaje
+      ctxSpring.fillStyle = '#64748b';
+      ctxSpring.fillRect(wallX - 18, centerY - 70, 18, 140);
+      ctxSpring.strokeStyle = '#334155';
+      ctxSpring.lineWidth = 2;
+      ctxSpring.strokeRect(wallX - 18, centerY - 70, 18, 140);
+
+      // Rayado diagonal de la pared
+      ctxSpring.strokeStyle = '#94a3b8';
+      ctxSpring.lineWidth = 1.5;
+      for (let y = centerY - 65; y <= centerY + 65; y += 12) {
+        ctxSpring.beginPath();
+        ctxSpring.moveTo(wallX - 18, y);
+        ctxSpring.lineTo(wallX - 30, y + 10);
+        ctxSpring.stroke();
+      }
+
+      // 2. Piso con línea de fricción / regla métrica
+      ctxSpring.strokeStyle = '#94a3b8';
+      ctxSpring.lineWidth = 2;
+      ctxSpring.beginPath();
+      ctxSpring.moveTo(wallX, centerY + blockHeight / 2 + 2);
+      ctxSpring.lineTo(w - 20, centerY + blockHeight / 2 + 2);
+      ctxSpring.stroke();
+
+      // Graduaciones en el piso (Regla en metros)
+      ctxSpring.font = '10px Inter, monospace';
+      ctxSpring.fillStyle = '#64748b';
+      ctxSpring.textAlign = 'center';
+      for (let markMeters = -1.5; markMeters <= 1.5; markMeters += 0.5) {
+        const mx = centerX + markMeters * scalePixelsPerMeter;
+        if (mx > wallX + 15 && mx < w - 25) {
+          ctxSpring.beginPath();
+          ctxSpring.moveTo(mx, centerY + blockHeight / 2 + 2);
+          ctxSpring.lineTo(mx, centerY + blockHeight / 2 + 8);
+          ctxSpring.stroke();
+          ctxSpring.fillText((markMeters > 0 ? '+' : '') + markMeters.toFixed(1) + 'm', mx, centerY + blockHeight / 2 + 20);
+        }
+      }
+
+      // Línea de referencia de equilibrio x = 0 (Verde clínica)
+      ctxSpring.save();
+      ctxSpring.setLineDash([4, 4]);
+      ctxSpring.strokeStyle = '#10b981';
+      ctxSpring.lineWidth = 1.5;
+      ctxSpring.beginPath();
+      ctxSpring.moveTo(centerX, centerY - 80);
+      ctxSpring.lineTo(centerX, centerY + 80);
+      ctxSpring.stroke();
+      ctxSpring.fillStyle = '#059669';
+      ctxSpring.font = 'bold 11px Inter, sans-serif';
+      ctxSpring.fillText('x = 0 (Equilibrio)', centerX, centerY - 85);
+      ctxSpring.restore();
+
+      // Líneas de los extremos x = +A y x = -A
+      ctxSpring.save();
+      ctxSpring.setLineDash([2, 2]);
+      ctxSpring.strokeStyle = '#f59e0b';
+      ctxSpring.lineWidth = 1;
+      const leftExtremity = centerX - state.A * scalePixelsPerMeter;
+      const rightExtremity = centerX + state.A * scalePixelsPerMeter;
+      ctxSpring.beginPath();
+      ctxSpring.moveTo(leftExtremity, centerY - 65);
+      ctxSpring.lineTo(leftExtremity, centerY + 65);
+      ctxSpring.moveTo(rightExtremity, centerY - 65);
+      ctxSpring.lineTo(rightExtremity, centerY + 65);
+      ctxSpring.stroke();
+      ctxSpring.fillStyle = '#b45309';
+      ctxSpring.font = '10px Inter, monospace';
+      ctxSpring.fillText('-A', leftExtremity, centerY - 70);
+      ctxSpring.fillText('+A', rightExtremity, centerY - 70);
+      ctxSpring.restore();
+
+      // 3. Dibujar Resorte Espiral Elástico con Deformación Real
+      const springStartX = wallX;
+      const springEndX = blockX - blockWidth / 2;
+      const coils = 16;
+      const springLength = springEndX - springStartX;
+      const coilWidth = springLength / coils;
+      const coilAmp = 14;
+
+      ctxSpring.strokeStyle = '#475569';
+      ctxSpring.lineWidth = 3;
+      ctxSpring.lineCap = 'round';
+      ctxSpring.lineJoin = 'round';
+      ctxSpring.beginPath();
+      ctxSpring.moveTo(springStartX, centerY);
+
+      for (let i = 0; i <= coils; i++) {
+        const cx = springStartX + i * coilWidth;
+        const cy = i === 0 || i === coils ? centerY : centerY + (i % 2 === 0 ? -coilAmp : coilAmp);
+        ctxSpring.lineTo(cx, cy);
+      }
+      ctxSpring.stroke();
+
+      // 4. Dibujar Masa (Bloque Tisular / Carrito Biomecánico)
+      const rectX = blockX - blockWidth / 2;
+      const rectY = centerY - blockHeight / 2;
+
+      // Sombra del bloque
+      ctxSpring.fillStyle = 'rgba(0,0,0,0.06)';
+      ctxSpring.fillRect(rectX + 4, rectY + 4, blockWidth, blockHeight);
+
+      // Degradado del bloque
+      const blockGradient = ctxSpring.createLinearGradient(rectX, rectY, rectX + blockWidth, rectY + blockHeight);
+      blockGradient.addColorStop(0, '#0284c7');
+      blockGradient.addColorStop(1, '#0369a1');
+      ctxSpring.fillStyle = blockGradient;
+      ctxSpring.fillRect(rectX, rectY, blockWidth, blockHeight);
+
+      ctxSpring.strokeStyle = '#0c4a6e';
+      ctxSpring.lineWidth = 2;
+      ctxSpring.strokeRect(rectX, rectY, blockWidth, blockHeight);
+
+      // Texto de masa
+      ctxSpring.fillStyle = '#ffffff';
+      ctxSpring.font = 'bold 12px Inter, sans-serif';
+      ctxSpring.textAlign = 'center';
+      ctxSpring.fillText(`m = ${state.m.toFixed(1)}kg`, blockX, centerY + 4);
+
+      // Asa o punto de enganche
+      ctxSpring.fillStyle = '#e2e8f0';
+      ctxSpring.beginPath();
+      ctxSpring.arc(rectX, centerY, 5, 0, Math.PI * 2);
+      ctxSpring.fill();
+      ctxSpring.stroke();
+
+      // 5. Dibujar Vectores Dinámicos en Tiempo Real (Velocidad, Aceleración, Fuerza)
+      // Vector Velocidad (Azul Celeste)
+      drawArrow(ctxSpring, blockX, rectY - 12, state.v * 28, '#0284c7', 'v⃗', 2.5);
+
+      // Vector Aceleración (Rojo Carmín)
+      drawArrow(ctxSpring, blockX, rectY - 26, state.a * 6, '#e11d48', 'a⃗', 2.5);
+
+      // Vector Fuerza de Hooke (Ámbar)
+      drawArrow(ctxSpring, blockX, rectY - 40, state.F * 3.5, '#d97706', 'F⃗_elástica', 2.5);
+    }
+
+    // Función auxiliar para dibujar flechas vectoriales
+    function drawArrow(ctx, fromX, fromY, length, color, label, strokeWidth = 2) {
+      if (Math.abs(length) < 3) return; // No dibujar flechas casi nulas
+      const toX = fromX + length;
+      const headLen = Math.sign(length) * 7;
+
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = strokeWidth;
+
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX, fromY);
+      ctx.stroke();
+
+      // Punta de flecha
+      ctx.beginPath();
+      ctx.moveTo(toX, fromY);
+      ctx.lineTo(toX - headLen, fromY - 4);
+      ctx.lineTo(toX - headLen, fromY + 4);
+      ctx.closePath();
+      ctx.fill();
+
+      // Etiqueta
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, fromX + length / 2, fromY - 6);
+      ctx.restore();
+    }
+
+    /* =========================================================================
+       6. OSCILOSCOPIO MULTICANAL CONTINUO EN TIEMPO REAL
+       ========================================================================= */
+    function drawOscilloscope() {
+      const w = oscilloCanvas.width;
+      const h = oscilloCanvas.height;
+      ctxOscillo.clearRect(0, 0, w, h);
+
+      // Retícula de osciloscopio de fondo
+      ctxOscillo.strokeStyle = '#1e293b';
+      ctxOscillo.lineWidth = 1;
+      const gridSize = 25;
+      for (let x = 0; x < w; x += gridSize) {
+        ctxOscillo.beginPath();
+        ctxOscillo.moveTo(x, 0);
+        ctxOscillo.lineTo(x, h);
+        ctxOscillo.stroke();
+      }
+      for (let y = 0; y < h; y += gridSize) {
+        ctxOscillo.beginPath();
+        ctxOscillo.moveTo(0, y);
+        ctxOscillo.lineTo(w, y);
+        ctxOscillo.stroke();
+      }
+
+      // Eje central temporal horizontal y = 0
+      const midY = h / 2;
+      ctxOscillo.strokeStyle = '#334155';
+      ctxOscillo.lineWidth = 1.5;
+      ctxOscillo.beginPath();
+      ctxOscillo.moveTo(0, midY);
+      ctxOscillo.lineTo(w, midY);
+      ctxOscillo.stroke();
+
+      if (state.history.length < 2) return;
+
+      const showX = document.getElementById('chk-trace-x').checked;
+      const showV = document.getElementById('chk-trace-v').checked;
+      const showA = document.getElementById('chk-trace-a').checked;
+
+      const stepX = w / state.maxHistoryPoints;
+      const scaleX = (h * 0.38) / 1.5; // Escala vertical para posición
+      const scaleV = (h * 0.38) / 4.0; // Escala vertical para velocidad
+      const scaleA = (h * 0.38) / 20.0; // Escala vertical para aceleración
+
+      // Trazar Curva Posición x(t) (Gris/Blanco resplandor)
+      if (showX) {
+        ctxOscillo.strokeStyle = '#38bdf8';
+        ctxOscillo.lineWidth = 2.2;
+        ctxOscillo.beginPath();
+        for (let i = 0; i < state.history.length; i++) {
+          const pt = state.history[i];
+          const px = i * stepX;
+          const py = midY - pt.x * scaleX;
+          if (i === 0) ctxOscillo.moveTo(px, py);
+          else ctxOscillo.lineTo(px, py);
+        }
+        ctxOscillo.stroke();
+      }
+
+      // Trazar Curva Velocidad v(t) (Azul celeste)
+      if (showV) {
+        ctxOscillo.strokeStyle = '#60a5fa';
+        ctxOscillo.lineWidth = 1.8;
+        ctxOscillo.beginPath();
+        for (let i = 0; i < state.history.length; i++) {
+          const pt = state.history[i];
+          const px = i * stepX;
+          const py = midY - pt.v * scaleV;
+          if (i === 0) ctxOscillo.moveTo(px, py);
+          else ctxOscillo.lineTo(px, py);
+        }
+        ctxOscillo.stroke();
+      }
+
+      // Trazar Curva Aceleración a(t) (Rojo Carmín)
+      if (showA) {
+        ctxOscillo.strokeStyle = '#f43f5e';
+        ctxOscillo.lineWidth = 1.8;
+        ctxOscillo.beginPath();
+        for (let i = 0; i < state.history.length; i++) {
+          const pt = state.history[i];
+          const px = i * stepX;
+          const py = midY - pt.a * scaleA;
+          if (i === 0) ctxOscillo.moveTo(px, py);
+          else ctxOscillo.lineTo(px, py);
+        }
+        ctxOscillo.stroke();
+      }
+    }
+
+    /* =========================================================================
+       7. GRÁFICAS ANALÍTICAS: PARÁBOLAS ENERGÉTICAS Y LEY DE HOOKE
+       ========================================================================= */
+    function drawEnergyParabolas() {
+      const w = energyCurveCanvas.width;
+      const h = energyCurveCanvas.height;
+      ctxEnergy.clearRect(0, 0, w, h);
+
+      const margin = { top: 20, right: 25, bottom: 25, left: 35 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      const originX = margin.left + plotW / 2;
+      const originY = margin.top + plotH; // y = 0 en el fondo
+
+      const maxA = Math.max(state.A, 1.0);
+      const totalEnergy = 0.5 * state.k * state.A * state.A;
+      const maxE = Math.max(totalEnergy * 1.25, 2.0);
+
+      const scaleX = (plotW / 2) / (maxA * 1.15);
+      const scaleY = plotH / maxE;
+
+      // Ejes coordenados
+      ctxEnergy.strokeStyle = '#cbd5e1';
+      ctxEnergy.lineWidth = 1.5;
+      ctxEnergy.beginPath();
+      // Eje X
+      ctxEnergy.moveTo(margin.left, originY);
+      ctxEnergy.lineTo(margin.left + plotW, originY);
+      // Eje Y
+      ctxEnergy.moveTo(originX, margin.top);
+      ctxEnergy.lineTo(originX, originY);
+      ctxEnergy.stroke();
+
+      // Línea horizontal de Energía Total Constante E (Verde esmeralda)
+      const lineEY = originY - totalEnergy * scaleY;
+      ctxEnergy.strokeStyle = '#059669';
+      ctxEnergy.lineWidth = 2.5;
+      ctxEnergy.beginPath();
+      ctxEnergy.moveTo(originX - state.A * scaleX, lineEY);
+      ctxEnergy.lineTo(originX + state.A * scaleX, lineEY);
+      ctxEnergy.stroke();
+
+      // Límites verticales en x = -A y x = +A
+      ctxEnergy.save();
+      ctxEnergy.setLineDash([3, 3]);
+      ctxEnergy.strokeStyle = '#94a3b8';
+      ctxEnergy.lineWidth = 1;
+      ctxEnergy.beginPath();
+      ctxEnergy.moveTo(originX - state.A * scaleX, originY);
+      ctxEnergy.lineTo(originX - state.A * scaleX, lineEY);
+      ctxEnergy.moveTo(originX + state.A * scaleX, originY);
+      ctxEnergy.lineTo(originX + state.A * scaleX, lineEY);
+      ctxEnergy.stroke();
+      ctxEnergy.restore();
+
+      // Parábola de Energía Potencial U(x) = 1/2 k x^2 (Ámbar)
+      ctxEnergy.strokeStyle = '#d97706';
+      ctxEnergy.lineWidth = 2.5;
+      ctxEnergy.beginPath();
+      const steps = 60;
+      for (let i = 0; i <= steps; i++) {
+        const xVal = -state.A + (2 * state.A * i) / steps;
+        const uVal = 0.5 * state.k * xVal * xVal;
+        const px = originX + xVal * scaleX;
+        const py = originY - uVal * scaleY;
+        if (i === 0) ctxEnergy.moveTo(px, py);
+        else ctxEnergy.lineTo(px, py);
+      }
+      ctxEnergy.stroke();
+
+      // Parábola de Energía Cinética K(x) = E - 1/2 k x^2 (Azul)
+      ctxEnergy.strokeStyle = '#0284c7';
+      ctxEnergy.lineWidth = 2;
+      ctxEnergy.beginPath();
+      for (let i = 0; i <= steps; i++) {
+        const xVal = -state.A + (2 * state.A * i) / steps;
+        const kVal = Math.max(0, totalEnergy - 0.5 * state.k * xVal * xVal);
+        const px = originX + xVal * scaleX;
+        const py = originY - kVal * scaleY;
+        if (i === 0) ctxEnergy.moveTo(px, py);
+        else ctxEnergy.lineTo(px, py);
+      }
+      ctxEnergy.stroke();
+
+      // Punto dinámico actual sobre la curva de U y K
+      const currentX_px = originX + state.x * scaleX;
+      const currentU_py = originY - state.U * scaleY;
+      const currentK_py = originY - state.K * scaleY;
+
+      // Punto Potencial U
+      ctxEnergy.fillStyle = '#d97706';
+      ctxEnergy.beginPath();
+      ctxEnergy.arc(currentX_px, currentU_py, 5, 0, Math.PI * 2);
+      ctxEnergy.fill();
+      ctxEnergy.strokeStyle = '#ffffff';
+      ctxEnergy.lineWidth = 1.5;
+      ctxEnergy.stroke();
+
+      // Punto Cinético K
+      ctxEnergy.fillStyle = '#0284c7';
+      ctxEnergy.beginPath();
+      ctxEnergy.arc(currentX_px, currentK_py, 5, 0, Math.PI * 2);
+      ctxEnergy.fill();
+      ctxEnergy.stroke();
+
+      // Textos de leyenda en la gráfica
+      ctxEnergy.fillStyle = '#64748b';
+      ctxEnergy.font = '10px Inter, monospace';
+      ctxEnergy.textAlign = 'center';
+      ctxEnergy.fillText('-A', originX - state.A * scaleX, originY + 12);
+      ctxEnergy.fillText('+A', originX + state.A * scaleX, originY + 12);
+      ctxEnergy.fillText('0', originX, originY + 12);
+    }
+
+    function drawHookeLine() {
+      const w = hookeCurveCanvas.width;
+      const h = hookeCurveCanvas.height;
+      ctxHooke.clearRect(0, 0, w, h);
+
+      const margin = { top: 15, right: 20, bottom: 20, left: 35 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      const originX = margin.left + plotW / 2;
+      const originY = margin.top + plotH / 2;
+
+      const maxA = Math.max(state.A, 1.0);
+      const maxF = state.k * maxA * 1.25;
+
+      const scaleX = (plotW / 2) / (maxA * 1.15);
+      const scaleY = (plotH / 2) / maxF;
+
+      // Ejes coordenados
+      ctxHooke.strokeStyle = '#cbd5e1';
+      ctxHooke.lineWidth = 1.2;
+      ctxHooke.beginPath();
+      ctxHooke.moveTo(margin.left, originY);
+      ctxHooke.lineTo(margin.left + plotW, originY);
+      ctxHooke.moveTo(originX, margin.top);
+      ctxHooke.lineTo(originX, margin.top + plotH);
+      ctxHooke.stroke();
+
+      // Recta continua de Hooke con pendiente negativa m = -k
+      const x1 = -state.A;
+      const F1 = -state.k * x1; // Positivo
+      const x2 = state.A;
+      const F2 = -state.k * x2; // Negativo
+
+      ctxHooke.strokeStyle = '#e11d48';
+      ctxHooke.lineWidth = 2.5;
+      ctxHooke.beginPath();
+      ctxHooke.moveTo(originX + x1 * scaleX, originY - F1 * scaleY);
+      ctxHooke.lineTo(originX + x2 * scaleX, originY - F2 * scaleY);
+      ctxHooke.stroke();
+
+      // Punto dinámico instantáneo sobre la recta
+      const curX = originX + state.x * scaleX;
+      const curF = originY - state.F * scaleY;
+
+      ctxHooke.fillStyle = '#e11d48';
+      ctxHooke.beginPath();
+      ctxHooke.arc(curX, curF, 5, 0, Math.PI * 2);
+      ctxHooke.fill();
+      ctxHooke.strokeStyle = '#ffffff';
+      ctxHooke.lineWidth = 1.5;
+      ctxHooke.stroke();
+
+      // Etiquetas en el canvas
+      ctxHooke.fillStyle = '#64748b';
+      ctxHooke.font = '9px Inter, monospace';
+      ctxHooke.textAlign = 'right';
+      ctxHooke.fillText('Fx [N]', originX - 5, margin.top + 8);
+      ctxHooke.textAlign = 'left';
+      ctxHooke.fillText('x [m]', margin.left + plotW - 25, originY - 5);
+    }
+
+    /* =========================================================================
+       8. ACTUALIZACIÓN DEL PANEL DE VALORES Y UI
+       ========================================================================= */
+    function updateUIElements() {
+      // 1. Valores instantáneos con signos
+      const signX = state.x >= 0 ? '+' : '';
+      const signV = state.v >= 0 ? '+' : '';
+      const signA = state.a >= 0 ? '+' : '';
+      const signF = state.F >= 0 ? '+' : '';
+
+      document.getElementById('val-x').textContent = `${signX}${state.x.toFixed(2)} m`;
+      document.getElementById('val-v').textContent = `${signV}${state.v.toFixed(2)} m/s`;
+      document.getElementById('val-a').textContent = `${signA}${state.a.toFixed(2)} m/s²`;
+      document.getElementById('val-f').textContent = `${signF}${state.F.toFixed(2)} N`;
+
+      // Insignias de estado
+      const badgeX = document.getElementById('badge-x-state');
+      const badgeV = document.getElementById('badge-v-state');
+      const badgeA = document.getElementById('badge-a-state');
+      const badgeF = document.getElementById('badge-f-state');
+
+      if (Math.abs(state.x) < 0.04) {
+        badgeX.textContent = 'En equilibrio (x=0)';
+        badgeX.className = 'inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium';
+        badgeV.textContent = 'Máxima';
+        badgeA.textContent = 'Nula (a=0)';
+        badgeF.textContent = 'Fuerza Nula';
+      } else if (state.x > 0) {
+        badgeX.textContent = 'Elongación (+)';
+        badgeX.className = 'inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-medium';
+        badgeV.textContent = state.v < 0 ? 'Retornando (←)' : 'Alejándose (→)';
+        badgeA.textContent = 'Hacia el centro (←)';
+        badgeF.textContent = 'Restauradora (←)';
+      } else {
+        badgeX.textContent = 'Compresión (−)';
+        badgeX.className = 'inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-medium';
+        badgeV.textContent = state.v > 0 ? 'Retornando (→)' : 'Comprimiendo (←)';
+        badgeA.textContent = 'Hacia el centro (→)';
+        badgeF.textContent = 'Restauradora (→)';
+      }
+
+      // 2. Parámetros angulares e integrales
+      const omega = Math.sqrt(state.k / state.m);
+      const freq = omega / (2 * Math.PI);
+      const period = 1 / freq;
+      const totalEnergy = 0.5 * state.k * state.A * state.A;
+
+      document.getElementById('calc-T').textContent = `${period.toFixed(2)} s`;
+      document.getElementById('calc-f').textContent = `${freq.toFixed(2)} Hz`;
+      document.getElementById('calc-w').textContent = `${omega.toFixed(2)} rad/s`;
+      document.getElementById('calc-E-total').textContent = `E = ${totalEnergy.toFixed(2)} J`;
+
+      // 3. Barras de Energía
+      const pctK = totalEnergy > 0 ? Math.min(100, Math.max(0, (state.K / totalEnergy) * 100)) : 0;
+      const pctU = totalEnergy > 0 ? Math.min(100, Math.max(0, (state.U / totalEnergy) * 100)) : 0;
+
+      document.getElementById('bar-K').style.width = `${pctK.toFixed(1)}%`;
+      document.getElementById('bar-U').style.width = `${pctU.toFixed(1)}%`;
+
+      document.getElementById('text-bar-K').textContent = `${state.K.toFixed(2)} J (${pctK.toFixed(0)}%)`;
+      document.getElementById('text-bar-U').textContent = `${state.U.toFixed(2)} J (${pctU.toFixed(0)}%)`;
+    }
+
+    /* =========================================================================
+       9. BUCLE PRINCIPAL DE ANIMACIÓN
+       ========================================================================= */
+    function animateLoop() {
+      if (state.isPlaying) {
+        updatePhysicsStep(state.timeStep * state.speedMultiplier);
+      }
+      drawSpringAndMass();
+      drawOscilloscope();
+      drawEnergyParabolas();
+      drawHookeLine();
+      updateUIElements();
+
+      requestAnimationFrame(animateLoop);
+    }
+
+    /* =========================================================================
+       10. EVENTOS, CONTROLES INTERACTIVOS Y PRESETS CLÍNICOS
+       ========================================================================= */
+    function togglePlay() {
+      state.isPlaying = !state.isPlaying;
+      const btn = document.getElementById('btn-play');
+      const label = document.getElementById('label-play');
+      const icon = document.getElementById('icon-play');
+
+      if (state.isPlaying) {
+        label.textContent = 'Pausar';
+        icon.innerHTML = '<path d="M4 4l12 6-12 6z"/>';
+        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+        btn.classList.add('bg-sky-600', 'hover:bg-sky-700');
+      } else {
+        label.textContent = 'Reanudar';
+        icon.innerHTML = '<path d="M4 4h4v12H4zm8 0h4v12h-4z"/>';
+        btn.classList.remove('bg-sky-600', 'hover:bg-sky-700');
+        btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+      }
+    }
+
+    function stepSimulation() {
+      if (state.isPlaying) togglePlay();
+      updatePhysicsStep(0.02);
+      drawSpringAndMass();
+      drawOscilloscope();
+      drawEnergyParabolas();
+      drawHookeLine();
+      updateUIElements();
+    }
+
+    function resetSimulation() {
+      state.t = 0;
+      state.x = state.A;
+      state.v = 0;
+      const dyn = computeDynamics(state.x, state.v);
+      state.a = dyn.accel;
+      state.F = -state.k * state.x;
+      state.history = [];
+      updateUIElements();
+    }
+
+    // Sliders de Parámetros Físicos
+    document.getElementById('slider-m').addEventListener('input', (e) => {
+      state.m = parseFloat(e.target.value);
+      document.getElementById('label-m').textContent = `${state.m.toFixed(2)} kg`;
+    });
+
+    document.getElementById('slider-k').addEventListener('input', (e) => {
+      state.k = parseFloat(e.target.value);
+      document.getElementById('label-k').textContent = `${state.k.toFixed(1)} N/m`;
+    });
+
+    document.getElementById('slider-A').addEventListener('input', (e) => {
+      const oldA = state.A;
+      state.A = parseFloat(e.target.value);
+      document.getElementById('label-A').textContent = `${state.A.toFixed(2)} m`;
+      // Ajustar posición x proporcionalmente
+      state.x = (state.x / (oldA || 1)) * state.A;
+    });
+
+    document.getElementById('slider-damping').addEventListener('input', (e) => {
+      state.damping = parseFloat(e.target.value);
+      document.getElementById('label-damping').textContent = `${state.damping.toFixed(2)} s⁻¹`;
+    });
+
+    // Interacción por Arrastre (Mouse y Touch) sobre el canvas
+    function getCanvasCoordinates(e) {
+      const rect = springCanvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      return (clientX - rect.left) * (springCanvas.width / rect.width);
+    }
+
+    springCanvas.addEventListener('mousedown', (e) => {
+      state.isDragging = true;
+      handleDrag(getCanvasCoordinates(e));
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (state.isDragging) {
+        handleDrag(getCanvasCoordinates(e));
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (state.isDragging) {
+        state.isDragging = false;
+        state.A = Math.max(0.05, Math.abs(state.x));
+        document.getElementById('slider-A').value = state.A;
+        document.getElementById('label-A').textContent = `${state.A.toFixed(2)} m`;
+        state.v = 0;
+      }
+    });
+
+    springCanvas.addEventListener('touchstart', (e) => {
+      state.isDragging = true;
+      handleDrag(getCanvasCoordinates(e));
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+      if (state.isDragging) {
+        handleDrag(getCanvasCoordinates(e));
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => {
+      if (state.isDragging) {
+        state.isDragging = false;
+        state.A = Math.max(0.05, Math.abs(state.x));
+        document.getElementById('slider-A').value = state.A;
+        document.getElementById('label-A').textContent = `${state.A.toFixed(2)} m`;
+        state.v = 0;
+      }
+    });
+
+    function handleDrag(canvasX) {
+      const centerX = springCanvas.width * 0.52;
+      const scalePixelsPerMeter = (springCanvas.width * 0.38) / 1.5;
+      let newX = (canvasX - centerX) / scalePixelsPerMeter;
+      newX = Math.max(-1.5, Math.min(1.5, newX));
+      state.x = newX;
+      state.v = 0; // Se suelta desde el reposo
+      const dyn = computeDynamics(state.x, state.v);
+      state.a = dyn.accel;
+      state.F = -state.k * state.x;
+    }
+
+    // Presets Clínicos
+    function applyPreset(preset) {
+      if (preset === 'ideal') {
+        state.m = 1.0;
+        state.k = 20.0;
+        state.A = 0.8;
+        state.damping = 0.0;
+      } else if (preset === 'ecg') {
+        // Frecuencia cardíaca ~ 75 lpm -> T = 0.8 s -> w = 7.85 rad/s -> k/m = 61.6
+        state.m = 0.8;
+        state.k = 49.3;
+        state.A = 0.5;
+        state.damping = 0.05;
+      } else if (preset === 'ultrasound') {
+        // Oscilador de muy alta frecuencia relativa con pequeña amplitud
+        state.m = 0.3;
+        state.k = 95.0;
+        state.A = 0.35;
+        state.damping = 0.0;
+      } else if (preset === 'tendon') {
+        // Tejido viscoelástico tendinoso con amortiguamiento alto
+        state.m = 2.0;
+        state.k = 40.0;
+        state.A = 1.1;
+        state.damping = 0.35;
+      }
+
+      // Actualizar inputs del DOM
+      document.getElementById('slider-m').value = state.m;
+      document.getElementById('label-m').textContent = `${state.m.toFixed(2)} kg`;
+
+      document.getElementById('slider-k').value = state.k;
+      document.getElementById('label-k').textContent = `${state.k.toFixed(1)} N/m`;
+
+      document.getElementById('slider-A').value = state.A;
+      document.getElementById('label-A').textContent = `${state.A.toFixed(2)} m`;
+
+      document.getElementById('slider-damping').value = state.damping;
+      document.getElementById('label-damping').textContent = `${state.damping.toFixed(2)} s⁻¹`;
+
+      resetSimulation();
+    }
+
+    // Calculadora Didáctica de Parámetros Cinemáticos
+    function updateCinematicCalc(origin) {
+      const inputT = document.getElementById('calc-input-T');
+      const inputF = document.getElementById('calc-input-f');
+      const resultW = document.getElementById('calc-result-w');
+      const clinicalNote = document.getElementById('calc-clinical-note');
+
+      let T = parseFloat(inputT.value) || 0.8;
+      let f = parseFloat(inputF.value) || 1.25;
+
+      if (origin === 'T') {
+        T = Math.max(0.001, T);
+        f = 1 / T;
+        inputF.value = f.toFixed(2);
+      } else {
+        f = Math.max(0.001, f);
+        T = 1 / f;
+        inputT.value = T.toFixed(2);
+      }
+
+      const w = 2 * Math.PI * f;
+      resultW.value = `${w.toFixed(2)} rad/s`;
+
+      const hr = f * 60;
+      let diagnosis = '';
+      if (hr < 60) diagnosis = 'Bradicardia sinusal (< 60 lpm)';
+      else if (hr <= 100) diagnosis = 'Frecuencia cardíaca fisiológica normal (60 - 100 lpm)';
+      else diagnosis = 'Taquicardia (> 100 lpm)';
+
+      clinicalNote.innerHTML = `💡 <strong>Interpretación Médica:</strong> Para un ciclo de <strong>${T.toFixed(2)} s</strong>, la frecuencia cardíaca es de <strong>${hr.toFixed(0)} latidos/minuto</strong>. Clasificación electrofisiológica: <em>${diagnosis}</em>.`;
+    }
+
+    /* =========================================================================
+       11. AJUSTE DE RESOLUCIÓN DE CANVASES PARA PANTALLAS RETINA / HI-DPI
+       ========================================================================= */
+    function resizeCanvases() {
+      const canvases = [springCanvas, oscilloCanvas, energyCurveCanvas, hookeCurveCanvas];
+      canvases.forEach(cv => {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = cv.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          cv.width = rect.width * dpr;
+          cv.height = rect.height * dpr;
+          const ctx = cv.getContext('2d');
+          ctx.scale(dpr, dpr);
+        }
+      });
+    }
+
+    // Inicialización en la carga completa de la ventana
+    window.onload = function () {
+      resizeCanvases();
+      window.addEventListener('resize', resizeCanvases);
+
+      // Renderizar fórmulas con KaTeX excluyendo header
+      renderMathWhenReady();
+
+      resetSimulation();
+      animateLoop();
+      switchTab('lab');
+    };
+  </script>
+</body>
+</html>
